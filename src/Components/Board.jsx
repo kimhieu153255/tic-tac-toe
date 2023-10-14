@@ -110,6 +110,9 @@ const Board = () => {
   return (
     <div className="h-screen w-full flex justify-center gap-10 ">
       <div className="flex flex-col gap-5 items-center my-auto ">
+        <div className="font-bold text-4xl text-center ">
+          THIS IS APP OF LE KIM HIEU - 20120474
+        </div>
         <div
           className={`text-center text-5xl mb-5 font-bold ${
             winner === "Draw" && "text-yellow-500"
@@ -142,14 +145,31 @@ const Board = () => {
       {/* map step */}
       {
         <div className=" w-56 mt-40">
-          <div
-            className="px-5 py-3 bg-green-400 text-center border rounded-md w-fit hover:bg-green-500 cursor-pointer transition duration-300 ease-in-out"
-            onClick={() => {
-              const newArr = [...step.reverse()];
-              setStep(newArr);
-            }}
-          >
-            Toggle
+          <div className="flex">
+            <div
+              className="px-5 py-3 bg-blue-500 text-center border rounded-md w-fit hover:bg-blue-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white"
+              onClick={() => {
+                setState(
+                  new Array(3).fill(null).map(() => new Array(3).fill(null))
+                );
+                setXIsNext(true);
+                setCount(0);
+                setWinner(null);
+                setWinLine([]);
+                setStep([]);
+              }}
+            >
+              Clear Board
+            </div>
+            <div
+              className="px-5 py-3 bg-green-500 text-center border rounded-md w-fit hover:bg-green-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white"
+              onClick={() => {
+                const newArr = [...step.reverse()];
+                setStep(newArr);
+              }}
+            >
+              Toggle
+            </div>
           </div>
           <div className="flex flex-col min-w-max">
             <span className="text-2xl font-bold">List step:</span>
