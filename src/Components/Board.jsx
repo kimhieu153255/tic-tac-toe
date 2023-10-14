@@ -110,8 +110,8 @@ const Board = () => {
   return (
     <div className="h-screen w-full flex justify-center gap-10 ">
       <div className="flex flex-col gap-5 items-center my-auto ">
-        <div className="font-bold text-4xl text-center ">
-          THIS IS A TIC TAC TOE GAME MADE BY LE KIM HIEU - 20120474
+        <div className="font-bold text-4xl text-center line-clamp-2">
+          THIS IS A GAME MADE BY LE KIM HIEU - 20120474
         </div>
         <div
           className={`text-center text-5xl mb-5 font-bold ${
