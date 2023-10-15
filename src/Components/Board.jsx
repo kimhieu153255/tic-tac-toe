@@ -72,12 +72,12 @@ const Board = () => {
   const [state, setState] = useState(
     new Array(3).fill(null).map(() => new Array(3).fill(null))
   );
-
+  const [history, setHistory] = useState([state]);
   const [xIsNext, setXIsNext] = useState(true);
   const [count, setCount] = useState(0);
   const [winner, setWinner] = useState(null);
   const [winLine, setWinLine] = useState([]);
-
+  const [toggle, setToggle] = useState(false);
   const [step, setStep] = useState([]);
 
   const handle = () => {
@@ -93,28 +93,30 @@ const Board = () => {
   const onPlay = (row, col) => {
     if (winner) return;
     if (state[row][col] !== null) return;
-    const newArr = [...state];
+    const newArr = [...JSON.parse(JSON.stringify(state))];
     newArr[row][col] = xIsNext ? "X" : "O";
+    //save history and step
+    setHistory((history) => [...history.slice(0, count + 1), newArr]);
+    setStep([...step.slice(0, count), { id: count, row, col }]);
     setState(newArr);
     setXIsNext(!xIsNext);
     setCount(count + 1);
-    setStep([...step, { id: count, row, col }]);
   };
 
   const handleRef = useRef();
   handleRef.current = handle;
   useEffect(() => {
     handleRef.current();
-  }, [state, count]);
+  }, [state, count, winner]);
 
   return (
     <div className="h-screen w-full flex justify-center gap-10 ">
-      <div className="flex flex-col gap-5 items-center my-auto ">
+      <div className="flex flex-col gap-3 items-center my-auto ">
         <div className="font-bold text-4xl text-center line-clamp-2">
           THIS IS A GAME MADE BY LE KIM HIEU - 20120474
         </div>
         <div
-          className={`text-center text-5xl mb-5 font-bold ${
+          className={`text-center text-5xl font-bold ${
             winner === "Draw" && "text-yellow-500"
           } ${winner === "X is winner" && "text-red-500"} ${
             winner === "O is winner" && "text-blue-500"
@@ -131,7 +133,7 @@ const Board = () => {
                   value={cell}
                   isPaint={
                     winLine.filter((item) => item[0] === i && item[1] === j)
-                      .length > 0
+                      .length > 0 && winner
                   }
                   onPlay={() => {
                     onPlay(i, j);
@@ -141,13 +143,18 @@ const Board = () => {
             </div>
           ))}
         </div>
+        {!winner && (
+          <div className="text-center text-2xl font-bold">
+            {xIsNext ? "X" : "O"} is next
+          </div>
+        )}
       </div>
       {/* map step */}
       {
-        <div className=" w-56 mt-40">
+        <div className=" w-80 mt-40">
           <div className="flex">
             <div
-              className="px-5 py-3 bg-blue-500 text-center border rounded-md w-fit hover:bg-blue-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white"
+              className="px-5 py-3 bg-blue-500 text-center border rounded-md w-fit hover:bg-blue-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white min-w-max"
               onClick={() => {
                 setState(
                   new Array(3).fill(null).map(() => new Array(3).fill(null))
@@ -157,27 +164,50 @@ const Board = () => {
                 setWinner(null);
                 setWinLine([]);
                 setStep([]);
+                setHistory([
+                  new Array(3).fill(null).map(() => new Array(3).fill(null)),
+                ]);
               }}
             >
               Clear Board
             </div>
             <div
-              className="px-5 py-3 bg-green-500 text-center border rounded-md w-fit hover:bg-green-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white"
+              className="px-5 py-3 bg-green-500 text-center border rounded-md w-fit hover:bg-green-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white min-w-max"
               onClick={() => {
+                if (step.length === 0) return;
                 const newArr = [...step.reverse()];
                 setStep(newArr);
+                setToggle(!toggle);
               }}
             >
-              Toggle
+              Toggle {toggle ? "Ascending" : "Descending"}
             </div>
           </div>
-          <div className="flex flex-col min-w-max">
+          <div className="flex flex-col gap-3 min-w-max">
             <span className="text-2xl font-bold">List step:</span>
-            {step.map((item, index) => (
-              <div key={index} className="text-lg font-semibold">
-                You are at move #{item.id}: ({item.row}, {item.col})
-              </div>
-            ))}
+            {step.map((item, index) => {
+              if (item.id === count - 1)
+                return (
+                  <div className="text-lg font-semibold">
+                    You are at move #{count - 1}
+                  </div>
+                );
+              else
+                return (
+                  <button
+                    key={index}
+                    className="text-lg font-semibold text-white px-5 py-2 bg-gray-400 text-center border rounded-md w-fit hover:bg-gray-500 cursor-pointer transition duration-300 ease-in-out"
+                    onClick={() => {
+                      setState(history[item.id + 1]);
+                      setXIsNext((item.id + 1) % 2 === 0);
+                      setCount(item.id + 1);
+                      setWinner(null);
+                    }}
+                  >
+                    Go to move #{item.id}: ({item.row}, {item.col})
+                  </button>
+                );
+            })}
           </div>
         </div>
       }
