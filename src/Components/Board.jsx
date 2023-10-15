@@ -156,7 +156,7 @@ const Board = () => {
       <div className=" w-80 mt-32">
         <div className="flex">
           <div
-            className="px-5 py-3 bg-blue-500 text-center border rounded-md w-fit hover:bg-blue-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white min-w-max"
+            className="px-5 py-3 bg-red-500 text-center border rounded-md w-fit hover:bg-red-600 cursor-pointer transition duration-300 ease-in-out font-bold text-white min-w-max"
             onClick={() => {
               setState(
                 new Array(3).fill(null).map(() => new Array(3).fill(null))
@@ -191,7 +191,7 @@ const Board = () => {
             if (item.id === count - 1)
               return (
                 <div className="text-lg font-semibold">
-                  You are at move #{count - 1}
+                  You are at move #{count - 1}: ({item.row}, {item.col})
                 </div>
               );
             else
